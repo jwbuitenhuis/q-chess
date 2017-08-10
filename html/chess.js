@@ -52,33 +52,20 @@ const board1 = ChessBoard('board1', {
     onChange: handleChange
 });
 
-const ws = new WebSocket("ws://localhost:5042/");
-ws.binaryType="arraybuffer";
+board1.start();
+
 // const boarda = [5,4,3,1,2,3,4,5,6,6,6,6,6,6,6,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-6,0,0,0,0,0,0,0,0,0,0,0,-6,-6,-6,-6,0,-6,-6,-6,-5,-4,-3,-1,-2,-3,-4,-5]
 // const boarda = [5,0,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-5,0,0,0,0,0,0]
-ws.onopen = () => {
-    board1.start();
-    // sendBoard(boarda)
-};
 
-// ws.onmessage = e => {
-//   const data = deserialize(e.data);
-//   const fen = indexToFEN(data);
-//   const move = "Server says: " + data + " " + fen;
-//   announce(move);
-//   board1.move(fen);
-// };
 
 function handleResponse(data) {
   const bestMove = data.sort((a,b) => b.score - a.score)[0];
 
-  // const data = deserialize(data);
   const fen = indexToFEN([bestMove.from, bestMove.to]);
-  const move = "Server says: " + data + " " + fen;
+  const move = "Server says: " + fen;
   announce(move);
   board1.move(fen);  
 }
-ws.onerror = e => console.error(e);
 
 function announce(message) {
     console.log(message);
