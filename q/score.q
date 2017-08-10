@@ -1,3 +1,5 @@
+\d .chess
+
 / white: positive, black: negative
 / king 	 1
 / queen  2
@@ -8,14 +10,9 @@
 
 valuation: 0 1 10 5 5 7 1
 
-scoreSide: {[color;board]
+scoreSide: {[board;color]
 	pieces: abs board where color = signum board;
-	kingFactor: 1 in pieces;
-	kingFactor * sum valuation pieces
+	(1 in pieces) * sum valuation pieces
 	}
 
-score: {[board]
-	friend: scoreSide[1;board];
-	enemy: scoreSide[-1;board];
-	friend % (friend + enemy)
-	}
+score: {(first sides) % sum sides: scoreSide[x] each 1 -1}

@@ -1,4 +1,5 @@
 \l score.q
+\d .chess
 
 score[1,2,3,4,6#0]~1f
 

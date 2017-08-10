@@ -15,10 +15,7 @@
 / pawn   6
 dispatch: `empty`king`queen`bishop`knight`rook`pawn
 
-/ cnt: 0
-
 performMove: {[board;x;move]
-	/ `cnt set cnt+1; 
 	board[move]: board[x];
 	board[x]:0;
 	board
@@ -36,7 +33,7 @@ formatMove: {[board;depth;color;move;alpha]
 	board: performMove[board;move[0];move[1]];
 	result:`from`to`color`board!(move[0];move[1];color;`board);
 
-	if[0 = depth;result[`score]:score[board];:result];
+	if[0 = depth;result[`score]:.chess.score[board];:result];
 
 	moves: getMoves[board;depth-1;neg color;alpha];
 	result[`moves]:moves;
@@ -61,4 +58,3 @@ getMoves: {[board;depth;color;scoreToBeat]
 	];
 	result
 	}
-
