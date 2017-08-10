@@ -1,4 +1,5 @@
 \l pawn.q
+\d .chess
 
 show `pawn
 pawn[(16#6),(48#0);8]~16 24

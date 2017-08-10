@@ -1,4 +1,5 @@
 \l rook.q
+\d .chess
 show `rook
 
 rook[0 6 0 5 0 -6 0 0,(56#6);3]~2 4 5
