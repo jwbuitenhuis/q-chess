@@ -8,7 +8,7 @@ respond: {[board]
 	board: "j"$board;
 	/ show 8 cut board;
 	t0: `long$.z.T;
-	moves: getMoves[board;4;1];
+	moves: getMoves[board;3;1];
 	show "taken: ", string `long$.z.T - t0;
 	moves
 	/ results: minimaxRoot[board;3;1];
