@@ -26,35 +26,47 @@ getPieceMoves: {[board;x]
 	pieceFn[board;x]
 	}
 
-cnt: 0
 formatMove: {[board;depth;color;move;alpha]
-	`cnt set cnt+1;
-	/ show cnt;
 	board: performMove[board;move[0];move[1]];
-	result:`from`to`color`board!(move[0];move[1];color;`board);
+	result:`move`color`alpha!(move;color;alpha);
 
-	if[0 = depth;result[`score]:.chess.score[board];:result];
+	if[0 = depth;result[`score]:.chess.score[board;color];:result];
 
-	moves: getMoves[board;depth-1;neg color;alpha];
-	result[`moves]:moves;
-	scores: {x[`score]} each moves;
-	result[`score]: min 1,scores;
+	results: getCounterMoves[board;depth-1;neg color;1-alpha];
+	scores: results[;`score]; 
+	score: 1-max 0,scores;
+	result[`moves]:results;
+	result[`score]:score;
 	result
 	}
 
-getMoves: {[board;depth;color;scoreToBeat]
+/ a move is scored by looking at the 
+getCounterMoves: {[board;depth;color;alpha]
 	pieces: where color = signum board;
 	moves: raze pieces,'' getPieceMoves[board] each pieces;
-	result:();
+	results:();
 	i:0;
-	alpha: scoreToBeat;
-	localMin:1;
-	while[(localMin > alpha) and i < count moves;
-		move: formatMove[board;depth;color;moves[i];scoreToBeat];		
-		localMin:scoreToBeat:min(localMin;move[`score]);
-		move[`scoreToBeat]:scoreToBeat;
-		result:result,enlist move;
+	localMax:0;
+	pruned:0b;
+	// it should stop when the move is refuted.
+	// that means a worse (higher) score has been found than alpha
+	while[(not pruned) and i < count moves;
+		result: formatMove[board;depth;color;moves[i];localMax];
+		result[`localMax]:localMax;
+		pruned:result[`pruned]:localMax>=alpha;
+		localMax:max(localMax;result[`score]);
+		results:results,enlist result;
 		i+:1
 	];
-	result
+	results
+	}
+
+getMoves: {[board;depth;color]
+	pieces: where color = signum board;
+	moves: raze pieces,'' getPieceMoves[board] each pieces;
+	scores: {[board;depth;color;move]
+		show "master move: ",.Q.s move;
+		formatMove[board;depth;color;move;0]
+		}[board;depth;color] each moves;
+	scores
 	}
