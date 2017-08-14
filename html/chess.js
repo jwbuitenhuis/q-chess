@@ -86,6 +86,8 @@ function announce(message) {
 
 function sendBoard(board) {
     announce("Sent board to server...");
-    $.post('http://localhost:5042/counter', JSON.stringify(board))
+    const data = JSON.stringify(board);
+    console.log("board:", data)
+    $.post('http://localhost:5042/counter', data)
       .then(handleResponse);
 }
