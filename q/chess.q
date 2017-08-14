@@ -36,10 +36,14 @@ formatMove: {[board;depth;color;move;alpha]
 	score
 	}
 
+genMoves:{[board;color]
+	pieces: where color = signum board;
+	raze pieces,'' getPieceMoves[board] each pieces
+	}
+
 / a move is scored by looking at the 
 getCounterMoves: {[board;depth;color;alpha]
-	pieces: where color = signum board;
-	moves: raze pieces,'' getPieceMoves[board] each pieces;
+	moves: genMoves[board;color];
 	results:();
 	i:0;
 	localMax:0;
@@ -56,8 +60,7 @@ getCounterMoves: {[board;depth;color;alpha]
 	}
 
 getMoves: {[board;depth;color]
-	pieces: where color = signum board;
-	moves: raze pieces,'' getPieceMoves[board] each pieces;
+	moves: genMoves[board;color];
 	f:formatMove[board;depth;color;;0];
 	{[f;x] `move`score!(x;f[x])}[f] each moves
 	}
