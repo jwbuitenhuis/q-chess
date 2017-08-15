@@ -1,13 +1,19 @@
 <!doctype html>
 <html>
 <head>
-<link rel=stylesheet href="chessboard-0.3.0.min.css">
+<link rel=stylesheet href="chessboard-0.3.0.css">
 <script src="jquery.js"></script>
-<script src="chessboard-0.3.0.min.js"></script>
+<script src="chessboard-0.3.0.js"></script>
+<style>
+.piece {
+	text-align: center;
+	font-size: 30px;
+}
+</style>
 </head>
 <body>
-<div id="board1" style="width: 400px"></div>
-<button onclick="board2.start()">start</button>
+<div id="board1" style="width: 500px"></div>
+<!-- <button onclick="board2.start()">start</button>
 <button onclick="board2.clear()">clear</button>
 <pre style="font-size: 28.5px">
 0  1  2  3  4  5  6  7 
@@ -19,6 +25,7 @@
 48 49 50 51 52 53 54 55
 56 57 58 59 60 61 62 63
 </pre>
+ -->
 <div id="status" style="font-size: 28.5px">Ready</div>
 <script src="chess.js"></script>
 </body>

@@ -1,3 +1,5 @@
+(function(){
+
 const FEN = " KQBNRP";
 function convert(position, piece) {
     const [col, row] = position.split("");
@@ -13,7 +15,7 @@ function convert(position, piece) {
 const q2FEN = n => (n > 0 ? 'w' : 'b') + FEN[Math.abs(n)];
 const indexToFEN = i => "hgfedcba"[i % 8] + (1 + Math.floor(i / 8));
 const indexesToFEN = list => list.map(indexToFEN).join("-");
-
+const FEN2index = d => "hgfedcba".indexOf(d[0]) + 8 * (parseInt(d[1], 10) - 1);
 function logBoard(board) {
     for(var i = 0;i<8;i++) {
         console.log(board.slice(i * 8, i * 8 + 8).join("  "));
@@ -22,8 +24,7 @@ function logBoard(board) {
 
 const emptyBoard = _ => Array(64).fill(0);
 
-let isChangeBlack = false;
-function handleChange(old, positions) {
+function getBoard(positions) {
     const board = emptyBoard();
 
     Object
@@ -31,8 +32,13 @@ function handleChange(old, positions) {
       .map(key => convert(key, positions[key]))
       .forEach(piece => {
         board[piece.index] = piece.kind;
-      })
+      });
+    return board;
+}
 
+let isChangeBlack = false;
+function handleChange(old, positions) {
+    const board = getBoard(positions);
     // logBoard(board);
 
     if(isChangeBlack) {
@@ -56,16 +62,43 @@ function generatePosition(board) {
 const minimal = generatePosition(boarda);
 // console.log(JSON.stringify(minimal));
 
+function handleDrop(from, to) {
+  console.log(from, to);
+  const move = FEN2index(from) + "-" + FEN2index(to);
+  isChangeBlack = true;
+  const found = allowedMoves
+    .map(d => d.join("-"))
+    .find(d => d === move);
+  return !found && 'snapback';
+}
+
 const board1 = ChessBoard('board1', {
     orientation: 'black',
     draggable: true,
     // position: generatePosition(boarda),
     dropOffBoard: 'trash',
-    onDrop: _ => isChangeBlack = true,
+    // pieceTheme: function (position) {
+    //   console.log(arguments);
+    //   return position;
+    // },
+    showNotation: false,
+    onDrop: handleDrop,
     onChange: handleChange
 });
 board1.start();
+function getMoves() {
+    const board = getBoard(board1.position());
+    const data = JSON.stringify(board);
+    console.log("board:", data)
+    return $.post('http://localhost:5042/legalMoves', data)
+        .then(handleMoves);
+}
 
+let allowedMoves;
+function handleMoves(data) {
+  allowedMoves = data;
+}
+getMoves();
 // sendBoard(boarda);
 
 function handleResponse(data) {
@@ -88,6 +121,8 @@ function sendBoard(board) {
     announce("Sent board to server...");
     const data = JSON.stringify(board);
     console.log("board:", data)
-    $.post('http://localhost:5042/counter', data)
-      .then(handleResponse);
+    return $.post('http://localhost:5042/counter', data)
+      .then(handleResponse)
+      .then(getMoves);
 }
+}());

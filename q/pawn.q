@@ -1,28 +1,33 @@
-/ opposite color
-.chess.enemy:{not sum signum (x;y)}
+/ opposite color cancels out to 0
+\l utils.q
+\d .chess
+enemy:{not sum signum (x;y)}
 
-.chess.PAWNMOVES: 8 16 9 7
+PAWN: ((1 2 1  1);(0 0 1 -1))
+PAWNMOVES: (neg PAWN;PAWN) 
 
 / in its initial position, a pawn can go forward by one or two
 / in subsequent positions, it can go forward by one
 / it may strike diagonally either way
 / TODO: en-passant, switch to queen
-.chess.pawn: {[board;x]
-	white: 0 < board x;
+pawn: {[board;x]
+	piece: board x;
+	white: 0 < piece;
 	isInitialRow: $[white;1;6] = x div 8;
 
-	/ 1. one forward (8) if:
+	/ 1. one forward if:
 	/ - target is empty and on the board
-	/ 2. two forward (16) if:
+	/ 2. two forward if:
 	/ - target is empty, on the board and pawn hasn't been moved
-	/ 3,4. strike left (9) /right (7)
+	/ 3,4. strike left / right
 	/ - target is occupied by an enemy
-	/ moves: x + PAWNMOVES * signum board x;
-	moves: $[white;+;-] [x; .chess.PAWNMOVES];
+	/ at least 3 or 4 is on the board
+	moves: relativeMoves[x;PAWNMOVES white];
+	target: board moves;
 
 	moves where (
-		0 = board moves 0;
-		isInitialRow and 0 = sum board moves[0 1];
-		.chess.enemy[board x; board moves 2];
-		.chess.enemy[board x; board moves 3])
+		0 = target 0;
+		isInitialRow and 0 = sum target 0 1;
+		enemy[piece; target 2];
+	 	(3 < count moves) and enemy[piece; target 3])
 	}

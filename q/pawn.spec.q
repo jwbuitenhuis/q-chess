@@ -13,3 +13,9 @@ pawn[b;8]~0#0
 
 / pawn on 15 can't strike 24
 pawn[(15#0),6,(8#0),-2,(39#0);15]~23 31
+
+/ it can't strike 16 either
+pawn[(15#0),6,-2,(47#0);15]~23 31
+
+/ it can strike 22
+pawn[(15#0),6,(6#0),-2,(41#0);15]~23 31 22

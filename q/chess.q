@@ -6,13 +6,8 @@
 \l knight.q
 \l score.q
 
-/ white: positive, black: negative
-/ king 	 1
-/ queen  2
-/ bishop 3
-/ knight 4
-/ rook 	 5
-/ pawn   6
+/ white: 1, black: -1
+/                1    2     3      4      5    6
 dispatch: `empty`king`queen`bishop`knight`rook`pawn
 
 performMove: {[board;x;move]
@@ -26,41 +21,33 @@ getPieceMoves: {[board;x]
 	pieceFn[board;x]
 	}
 
-formatMove: {[board;depth;color;move;alpha]
-	board: performMove[board;move[0];move[1]];
+getScore: {[board;depth;color;alpha;move]
+	board: performMove[board] . move;
 
 	if[0 = depth;:.chess.score[board;color]];
 
-	results: getCounterMoves[board;depth-1;neg color;1-alpha];
-	score: 1-max 0,results;
-	score
-	}
-
-genMoves:{[board;color]
-	pieces: where color = signum board;
-	raze pieces,'' getPieceMoves[board] each pieces
-	}
-
-/ a move is scored by looking at the 
-getCounterMoves: {[board;depth;color;alpha]
-	moves: genMoves[board;color];
+	moves: legalMoves[board;neg color];
 	results:();
 	i:0;
 	localMax:0;
-	pruned:0b;
 
-	while[(not pruned) and i < count moves;
-		result: formatMove[board;depth;color;moves[i];localMax];
-		pruned:localMax>=alpha;
+	while[(localMax<1-alpha) and i < count moves;
+		result: .z.s[board;depth-1;neg color;localMax;moves[i]];
 		localMax:max(localMax;result);
 		results:results,enlist result;
 		i+:1
 	];
-	results
+
+	1-max 0,results
+	}
+
+legalMoves:{[board;color]
+	pieces: where color = signum board;
+	raze pieces,'' getPieceMoves[board] each pieces
 	}
 
 getMoves: {[board;depth;color]
-	moves: genMoves[board;color];
-	f:formatMove[board;depth;color;;0];
-	{[f;x] `move`score!(x;f[x])}[f] each moves
+	moves: legalMoves[board;color];
+	scores: getScore[board;depth;color;0] peach moves;
+	flip `move`score!(moves;scores)
 	}
