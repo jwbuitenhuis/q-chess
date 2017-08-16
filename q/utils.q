@@ -12,10 +12,6 @@ reachable:{[board;x;moves]
 	cutoff # moves
 	}
 
-/ moves; (rows;cols)
-/ coords: applies these on the current cell
-/ onboard: filter the ones that fit on the board
-/ calculate board positions from the coordinates
 relativeMoves:{[x;moves]
 	coords: moves + (x div 8; x mod 8);
 	onboard: where min raze (0<=;8>) @\:/: coords;
