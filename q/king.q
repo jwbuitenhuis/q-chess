@@ -22,3 +22,7 @@ king:{[board;x]
 	candidates: relativeMoves[x;.chess.KINGMOVES];
 	avoidFriends[board;x;candidates]
 	}
+
+castling: {[board;x]
+	
+	}

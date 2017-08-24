@@ -18,9 +18,3 @@ scoreSide: {[board;color]
 score: {[board;color]
 	(first sides) % sum sides: scoreSide[board] each (color;neg color)
 	}
-
-valuation2: 0 900 10 5 5 7 1
-
-score2: {[board;color]
-	color * sum valuation2 abs board where color = signum board
-	}

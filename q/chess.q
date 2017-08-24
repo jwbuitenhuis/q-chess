@@ -6,6 +6,7 @@
 \l knight.q
 \l score.q
 
+\d .chess
 / white: 1, black: -1
 /                1    2     3      4      5    6
 dispatch: `empty`king`queen`bishop`knight`rook`pawn
@@ -17,19 +18,17 @@ performMove: {[board;x;move]
 	}
 
 getPieceMoves: {[board;x]
-	pieceFn: .chess[dispatch[abs board x]];
-	pieceFn[board;x]
+	// how get rid of .chess here?
+	.[.chess[dispatch[abs board x]];(board;x)]
 	}
 
 getScore: {[board;depth;color;alpha;move]
 	board: performMove[board] . move;
-
-	if[0 = depth;:.chess.score[board;color]];
+	if[0 = depth;:score[board;color]];
 
 	moves: legalMoves[board;neg color];
 	results:();
-	i:0;
-	localMax:0;
+	i:localMax:0;
 
 	while[(localMax<1-alpha) and i < count moves;
 		result: .z.s[board;depth-1;neg color;localMax;moves[i]];
@@ -47,7 +46,12 @@ legalMoves:{[board;color]
 	}
 
 getMoves: {[board;depth;color]
-	moves: legalMoves[board;color];
+	show moves: legalMoves[board;color];
 	scores: getScore[board;depth;color;0] peach moves;
 	flip `move`score!(moves;scores)
 	}
+
+/ b: 5 4 3 1 2 3 4 5 6 6 6 6 6 6 6 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -6 -6 -6 -6 -6 -6 -6 -6 -5 -4 -3 -1 -2 -3 -4 -5
+/ b: 5 0 3 1 2 3 4 5 0 6 0 0 6 6 0 6 0 0 0 6 0 0 0 0 -3 6 6 -6 0 0 6 0 0 0 0 0 -6 0 0 4 0 0 0 0 0 -6 0 0 -6 -6 -6 0 0 0 -6 -6 -5 0 0 -1 -2 -3 -4 -5
+/ \t result: getMoves[b;4;1]
+/ show result

@@ -1,31 +1,36 @@
 (function(){
 'use strict';
 
-const take = (n, d) => Array(n).fill(d);
-const raze = list => [].concat.apply([], list);
-const emptyBoard = _ => Array(64).fill(0);
-
 const FEN = " KQBNRP";
-function convert(position, piece) {
-    const [col, row] = position.split("");
-    const index = ((parseInt(row, 10) - 1) * 8) +
-        "hgfedcba".indexOf(col);
+
+// h2 => 8
+const FEN2index = ([row, col]) =>
+    "hgfedcba".indexOf(row) + 8 * (parseInt(col, 10) - 1);
+
+const index2FEN = i => "hgfedcba"[i % 8] + (1 + Math.floor(i / 8));
+
+function convert([position, piece]) {
+    console.log(position, piece);
+    const index = FEN2index(position);
 
     const [color, type] = piece.split("");
     const factor = color === 'w' ? 1 : -1;
     const kind = factor * FEN.indexOf(type);
+    console.log(index, kind);
     return {index, kind};
 }
 
 const q2FEN = n => (n > 0 ? 'w' : 'b') + FEN[Math.abs(n)];
-const indexToFEN = i => "hgfedcba"[i % 8] + (1 + Math.floor(i / 8));
-const indexesToFEN = list => list.map(indexToFEN).join("-");
-const FEN2index = d => "hgfedcba".indexOf(d[0]) + 8 * (parseInt(d[1], 10) - 1);
-const addPiece = (board, piece) => (board[piece.index] = piece.kind, board);
+const indexesToFEN = list => list.map(index2FEN).join("-");
+
+
 const entries = o => Object.keys(o).map(d => [d, o[d]]);
+const repeat = (n, x) => Array(n).fill(x);
+
+const addPiece = (board, piece) => (board[piece.index] = piece.kind, board);
 const getBoard = positions => entries(positions)
-    .map(d => convert.apply(null, d))
-    .reduce(addPiece, emptyBoard());
+    .map(convert)
+    .reduce(addPiece, repeat(64, 0));
 
 let isChangeBlack = false;
 function handleChange(_, positions) {
@@ -36,6 +41,8 @@ function handleChange(_, positions) {
     }
 }
 
+// const raze = list => [].concat.apply([], list);
+// const take = (n, d) => Array(n).fill(d);
 // const boarda = [5,4,3,1,2,3,4,5,6,6,6,6,6,6,6,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-6,0,0,0,0,0,0,0,0,0,0,0,-6,-6,-6,-6,0,-6,-6,-6,-5,-4,-3,-1,-2,-3,-4,-5]
 // const boarda = [5,0,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-5,0,0,0,0,0,0]
 
@@ -102,6 +109,6 @@ const board1 = ChessBoard('board1', {
 board1.start();
 sendBoard(getBoard(board1.position()));
 
-getMoves();
+// getMoves();
 
 }());
