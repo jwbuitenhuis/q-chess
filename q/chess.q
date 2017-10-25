@@ -8,29 +8,22 @@
 
 \d .chess
 / white: 1, black: -1
-/                1    2     3      4      5    6
-dispatch: `empty`king`queen`bishop`knight`rook`pawn
+/                       1    2     3      4      5    6
+dispatch: .chess[`empty`king`queen`bishop`knight`rook`pawn]
 
 / short castle moves positive
 castle:{[board;move]
 	direction: $[move in 1 57;1;-1];
 	rook: board[move - direction];
-	board[move - direction]:0;
-	board[move + direction]:rook;
-	board
+	@[board;(move+direction;move-direction);:;(rook;0)]
 	}
 
 performMove: {[board;x;move]
-	board[move]: board[x];
-	board[x]:0;
-
+	board: @[board;(move;x);:;(board x;0)];
 	$[(1 > abs x - move) and 1=abs board x;castle[board;move];board]
 	}
 
-getPieceMoves: {[board;x]
-	// how get rid of .chess here?
-	.[.chess[dispatch[abs board x]];(board;x)]
-	}
+getPieceMoves: {[board;x] .[dispatch[abs board x];(board;x)]}
 
 getScore: {[board;depth;color;alpha;move]
 	board: performMove[board] . move;
@@ -64,4 +57,4 @@ getMoves: {[board;depth;color]
 / b: 5 4 3 1 2 3 4 5 6 6 6 6 6 6 6 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -6 -6 -6 -6 -6 -6 -6 -6 -5 -4 -3 -1 -2 -3 -4 -5
 / b: 5 0 3 1 2 3 4 5 0 6 0 0 6 6 0 6 0 0 0 6 0 0 0 0 -3 6 6 -6 0 0 6 0 0 0 0 0 -6 0 0 4 0 0 0 0 0 -6 0 0 -6 -6 -6 0 0 0 -6 -6 -5 0 0 -1 -2 -3 -4 -5
 / \t result: getMoves[b;4;1]
-/ show result
+/show result

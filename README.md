@@ -20,5 +20,4 @@ q test.spec.q
 ```
 
 Run any *.spec.q for partial tests.
-
 Start q with -s [n] to benefit from peach.
