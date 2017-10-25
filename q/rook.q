@@ -1,9 +1,9 @@
 \l utils.q
 \d .chess
+
 / a rook may move anywhere in it's current column and row
 / it may not pass a piece of its own color
 / it may strike the first enemy it encounters in any direction
-/ TODO - castling
 extremes: {(y where x < y; reverse y where x > y)}
 
 / cached list of rook movements
