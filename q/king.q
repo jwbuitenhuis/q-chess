@@ -5,24 +5,30 @@ KINGMOVES: (
 	(0  0  1 1 1 -1 -1 -1);
 	(-1 1 -1 0 1 -1  0  1))
 
-/ Castling may only be done if the king has never moved,
-/ the rook involved has never moved, the squares between
-/ the king and the rook involved are unoccupied, the king
-/ is not in check, and the king does not cross over or end
-/ on a square in which it would be in check. 
-
-/ is king on original position?
-/ are castling squares empty?
-/ is rook on original position?
-/ get enemy moves. any of targets in destination?
-/ check history of moves here or when performing move?
 / 8 options, if not friend and on board
-/ TODO castling
 king:{[board;x]
-	candidates: relativeMoves[x;.chess.KINGMOVES];
-	avoidFriends[board;x;candidates]
+	candidates: relativeMoves[x;KINGMOVES];
+	avoidFriends[board;x;candidates],castling[board;x]
+	}
+
+initialKing:59 3
+initialRook:(56 63;0 7)
+
+/ TODO:
+/ can't castle if king in check or path checked
+/ history of moves
+canCastle:{[board;x;vector]
+	canReach: (count vector) = count reachable[board;x;vector];
+	white: 0 < signum board x;
+	kingInit: 1=abs board initialKing[white];
+	longVector:3=count vector;
+	rookPosition: initialRook[white][longVector];
+	rookInit: 5=abs board[rookPosition];
+	canReach and kingInit and rookInit
 	}
 
 castling: {[board;x]
-	
+	vectors: (x + 1 2 3;x - 1 2);
+	v:vectors where canCastle[board;x] each vectors;
+	v[;1]
 	}

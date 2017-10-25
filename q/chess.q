@@ -11,10 +11,20 @@
 /                1    2     3      4      5    6
 dispatch: `empty`king`queen`bishop`knight`rook`pawn
 
+/ short castle moves positive
+castle:{[board;move]
+	direction: $[move in 1 57;1;-1];
+	rook: board[move - direction];
+	board[move - direction]:0;
+	board[move + direction]:rook;
+	board
+	}
+
 performMove: {[board;x;move]
 	board[move]: board[x];
 	board[x]:0;
-	board
+
+	$[(1 > abs x - move) and 1=abs board x;castle[board;move];board]
 	}
 
 getPieceMoves: {[board;x]

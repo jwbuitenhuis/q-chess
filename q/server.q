@@ -1,6 +1,8 @@
 \l chess.q
-\p 5042
 \d .chess
+
+/ instruct the web server to serve up local html
+.h.HOME:(first system "pwd"),"/../html/"
 
 counter: {[board]
 	show board;

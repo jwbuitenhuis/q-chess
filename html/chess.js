@@ -10,19 +10,16 @@ const FEN2index = ([row, col]) =>
 const index2FEN = i => "hgfedcba"[i % 8] + (1 + Math.floor(i / 8));
 
 function convert([position, piece]) {
-    console.log(position, piece);
     const index = FEN2index(position);
 
     const [color, type] = piece.split("");
     const factor = color === 'w' ? 1 : -1;
     const kind = factor * FEN.indexOf(type);
-    console.log(index, kind);
     return {index, kind};
 }
 
 const q2FEN = n => (n > 0 ? 'w' : 'b') + FEN[Math.abs(n)];
 const indexesToFEN = list => list.map(index2FEN).join("-");
-
 
 const entries = o => Object.keys(o).map(d => [d, o[d]]);
 const repeat = (n, x) => Array(n).fill(x);
@@ -60,15 +57,17 @@ function handleDrop(from, to) {
     const found = allowedMoves
         .map(d => d.join("-"))
         .find(d => d === move);
+
     return !found && 'snapback';
 }
 
 let allowedMoves;
+let currentBoard;
 function getMoves() {
     const board = getBoard(board1.position());
-    const data = JSON.stringify(board);
-    console.log("board:", data)
-    return $.post('http://localhost:5042/legalMoves', data)
+    currentBoard = JSON.stringify(board);
+    console.log("board:", currentBoard)
+    return $.post('legalMoves', currentBoard)
         .then(d => allowedMoves = d);
 }
 
@@ -91,7 +90,7 @@ function sendBoard(board) {
     announce("Sent board to server...");
     const data = JSON.stringify(board);
     console.log("board:", data)
-    return $.post('http://localhost:5042/counter', data)
+    return $.post('counter', data)
         .then(handleResponse)
         .then(getMoves);
 }
@@ -108,7 +107,5 @@ const board1 = ChessBoard('board1', {
 
 board1.start();
 sendBoard(getBoard(board1.position()));
-
-// getMoves();
 
 }());
