@@ -1,15 +1,14 @@
 / opposite color cancels out to 0
 \l utils.q
 \d .chess
-enemy:{not sum signum (x;y)}
 
-PAWN: ((1 2 1  1);(0 0 1 -1))
+PAWN: (1 2 1 1;0 0 1 -1)
 PAWNMOVES: (neg PAWN;PAWN) 
 
 / in its initial position, a pawn can go forward by one or two
 / in subsequent positions, it can go forward by one
 / it may strike diagonally either way
-/ TODO: en-passant, switch to queen
+/ TODO: switch to queen
 pawn: {[board;x]
 	piece: board x;
 	white: 0 < piece;
@@ -27,7 +26,9 @@ pawn: {[board;x]
 
 	moves where (
 		0 = target 0;
-		isInitialRow and 0 = sum target 0 1;
-		enemy[piece; target 2];
-	 	(3 < count moves) and enemy[piece; target 3])
+		/ short circuit is faster than and (eager)
+		$[isInitialRow;0=sum target 0 1;0b];
+		/ non-dry but faster than factoring into a lambda
+		$[white;0>target 2;0<target 2];
+	 	$[3 < count moves;$[white;0>target 3;0<target 3];0b])
 	}

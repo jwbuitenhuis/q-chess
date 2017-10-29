@@ -1,6 +1,5 @@
 \l chess.q
 \d .chess
-
 / instruct the web server to serve up local html
 .h.HOME:(first system "pwd"),"/../html/"
 

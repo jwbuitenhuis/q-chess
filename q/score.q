@@ -12,8 +12,9 @@ valuation: 0 1 10 5 5 7 1
 
 scoreSide: {[board;color]
 	pieces: abs board where color = signum board;
-	(1 in pieces) * sum valuation pieces
+	$[1 in pieces;sum valuation pieces;0]
 	}
+
 
 score: {[board;color]
 	(first sides) % sum sides: scoreSide[board] each (color;neg color)
